@@ -1,0 +1,22 @@
+// ==UserScript==
+// @name         Bot for Yandex
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       You
+// @match        https://yandex.ru/*
+// @grant        none
+// ==/UserScript==
+let text = document.getElementById('text');
+
+if (text != null){
+    text.value="Гобой";
+    document.querySelector("button[type='submit']").click();
+}
+let links = document.links;
+for (let i=0;i<links.length;i++){
+  if (links[i].href.indexOf('xn----7sbab5aqcbiddtdj1e1g.xn--p1ai') != -1){
+    links[i].click();
+     break;
+  }
+}
