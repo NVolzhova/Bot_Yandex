@@ -7,16 +7,23 @@
 // @match        https://yandex.ru/*
 // @grant        none
 // ==/UserScript==
+let submit = document.querySelector("button[type='submit']")
 let text = document.getElementById('text');
+let keywords = ["Гобой", "Как звучит флейта", "Что такое валторна", "Как выглядит тромбон", "Музыкальные диктанты онлайн", "Виолончель"];
+let keyword = keywords[getRandom(0,keywords.length)];
 
 if (text != null){
-    text.value="Гобой";
-    document.querySelector("button[type='submit']").click();
+    text.value=keyword;
+    setTimeout(()=>submit.click(), getRandom(3000,10000));
 }
 let links = document.links;
 for (let i=0;i<links.length;i++){
   if (links[i].href.indexOf('xn----7sbab5aqcbiddtdj1e1g.xn--p1ai') != -1){
-    links[i].click();
+    setTimeout(()=>links[i].click(), getRandom(3000,10000));
      break;
   }
+}
+
+function getRandom(min,max){
+    return Math.floor(Math.random()*(max-min)+min);
 }
