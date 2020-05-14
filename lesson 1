@@ -5,25 +5,73 @@
 // @description  try to take over the world!
 // @author       You
 // @match        https://yandex.ru/*
+// @match        https://xn----7sbab5aqcbiddtdj1e1g.xn--p1ai/*
 // @grant        none
 // ==/UserScript==
+
+let btnNextPage = document.evaluate ("//a[@aria-label='Следующая страница']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+let pager = document.evaluate ("//span[@class='pager__item pager__item_current_yes pager__item_kind_page']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+let logo = document.evaluate ("//body/header/div/div/div/a[1]", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+
+
 let submit = document.querySelector("button[type='submit']")
 let text = document.getElementById('text');
-let keywords = ["Гобой", "Как звучит флейта", "Что такое валторна", "Как выглядит тромбон", "Музыкальные диктанты онлайн", "Виолончель"];
+let keywords = ["Гобой", "Как звучит флейта", "Что такое валторна", "Как выглядит тромбон", "Музыкальные диктанты онлайн", "Виолончель", "Теория музыки", "Барабаное шоу"];
 let keyword = keywords[getRandom(0,keywords.length)];
 
 if (text != null){
-    text.value=keyword;
-    setTimeout(()=>submit.click(), getRandom(3000,10000));
+    writeWord(keyword);
 }
 let links = document.links;
-for (let i=0;i<links.length;i++){
-  if (links[i].href.indexOf('xn----7sbab5aqcbiddtdj1e1g.xn--p1ai') != -1){
-    setTimeout(()=>links[i].click(), getRandom(3000,10000));
-     break;
-  }
+
+if (location.host == "yandex.ru"){
+    getYandexPage();
+}
+else {
+    if (getRandom(0,100)>20){
+        let index = getRandom(0,links.length);
+        if(links[index].href.indexOf('xn----7sbab5aqcbiddtdj1e1g.xn--p1ai')!=-1) {
+            setTimeout(()=>{links[index].click();}, getRandom(3000, 10000));
+		}
+        else location.href = 'https://xn----7sbab5aqcbiddtdj1e1g.xn--p1ai/';
+    }
+    else location.href = "https://yandex.ru";
 }
 
 function getRandom(min,max){
     return Math.floor(Math.random()*(max-min)+min);
+}
+
+function writeWord(keyword){
+  let i = 0;
+  let timerId = setInterval(()=>{
+    text.value += keyword[i];
+    i++;
+    if (i==keyword.length) {
+        clearInterval(timerId);
+        submit.click();
+    }
+  },300);
+}
+
+function getYandexPage() {
+	let goNextPage = true;
+	for (let i=0;i<links.length;i++){
+		if (links[i].href.indexOf('xn----7sbab5aqcbiddtdj1e1g.xn--p1ai') != -1){
+			goNextPage = false;
+			links[i].removeAttribute('target');
+			setTimeout(()=>links[i].click(), getRandom(3000,10000));
+			break;
+		}
+	}
+
+	if (goNextPage) { setTimeout(()=>{
+			if (pager.singleNodeValue.innerText == "10") {
+				logo.singleNodeValue.click();
+			}
+			else {
+				btnNextPage.singleNodeValue.click()
+			};
+		}, getRandom(3000,10000));
+	}
 }
