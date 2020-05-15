@@ -40,7 +40,7 @@ if (location.host == "yandex.ru"){
 else {
     if (getRandom(0,100)>20){
         let index = getRandom(0,links.length);
-        if(links[index].href.indexOf(site)!=-1) {
+        if(links[index].href.indexOf(site)!=-1 && links[index].href.indexOf('#')== -1 && links[index].href.indexOf('.jpg')== -1) {
             setTimeout(()=>{links[index].click();}, getRandom(3000, 10000));
 		}
         else location.href = `https://${site}/`;
@@ -55,12 +55,14 @@ function getRandom(min,max){
 function writeWord(keyword){
   let i = 0;
   let timerId = setInterval(()=>{
-    text.value += keyword[i];
+  setTimeout(()=>{
+    text.value += keyword[i]==undefined?'':keyword[i];
     i++;
     if (i==keyword.length) {
         clearInterval(timerId);
         submit.click();
     }
+    },getRandom(0,1000));
   },300);
 }
 
@@ -68,10 +70,11 @@ function getYandexPage() {
 	let goNextPage = true;
 	for (let i=0;i<links.length;i++){
 		if (links[i].href.indexOf(site) != -1){
-            setTimeout(()=>{links[i].scrollIntoView(true);},2000);
+            let link = links[i];
+            setTimeout(()=>{link.scrollIntoView(true);},2000);
             goNextPage = false;
             links[i].removeAttribute('target');
-            setTimeout(()=>links[i].click(), getRandom(3000,10000));
+            setTimeout(()=>link.click(), getRandom(3000,10000));
      break;
 		}
 	}
